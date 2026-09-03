@@ -19,12 +19,18 @@ jobs:
     - name: Instal Alat Perakitan SDK Android
       run: |
         sudo apt-get update
-        sudo apt-get install -y libsqlite3-dev lldd scons texlive-extra-utils
+        sudo apt-get install -y libsqlite3-dev lldd scons texlive-extra-utils openjdk-17-jdk
         pip install buildozer cython virtualenv
+
+    - name: Setujui Lisensi Android Google Otomatis
+      run: |
+        mkdir -p ~/.android
+        touch ~/.android/repositories.cfg
 
     - name: Cetak File APK Final
       run: |
-        yes y | buildozer -v android debug
+        # PERBAIKAN UTAMA: Menambahkan perintah auto-yes dan bypass root untuk Linux GitHub
+        yes y | buildozer --allow-root -v android debug
 
     - name: Simpan File APK Siap Unduh
       uses: actions/upload-artifact@v4
