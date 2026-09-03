@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04  # Mengunci ke versi Ubuntu yang paling stabil untuk Android
 
     steps:
     - name: Ambil Kode Program
@@ -16,20 +16,22 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Instal Alat Perakitan SDK Android
+    - name: Siapkan Java JDK Mandiri
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Instal Alat Perakitan Linux
       run: |
         sudo apt-get update
-        sudo apt-get install -y libsqlite3-dev lldd scons texlive-extra-utils openjdk-17-jdk
+        sudo apt-get install -y libsqlite3-dev lldd scons ccze
+        pip install --upgrade pip
         pip install buildozer cython virtualenv
-
-    - name: Setujui Lisensi Android Google Otomatis
-      run: |
-        mkdir -p ~/.android
-        touch ~/.android/repositories.cfg
 
     - name: Cetak File APK Final
       run: |
-        # PERBAIKAN UTAMA: Menambahkan perintah auto-yes dan bypass root untuk Linux GitHub
+        # Memaksa persetujuan lisensi dan menjalankan pembungkusan aman
         yes y | buildozer --allow-root -v android debug
 
     - name: Simpan File APK Siap Unduh
