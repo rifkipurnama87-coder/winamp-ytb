@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04  # Mengunci ke versi Ubuntu yang paling stabil untuk Android
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Ambil Kode Program
@@ -31,11 +31,14 @@ jobs:
 
     - name: Cetak File APK Final
       run: |
-        # Memaksa persetujuan lisensi dan menjalankan pembungkusan aman
-        yes y | buildozer --allow-root -v android debug
+        # Menjalankan perakitan dan menyimpan laporan ke file log jika terjadi crash
+        yes y | buildozer --allow-root -v android debug > buildozer_output.log 2>&1
 
-    - name: Simpan File APK Siap Unduh
+    - name: Simpan Laporan Log Error jika Gagal
+      if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: Aplikasi-Winamp-Mobile-Anda
-        path: bin/*.apk
+        name: Laporan-Log-Error-Perakitan
+        path: |
+          buildozer_output.log
+          bin/*.apk
