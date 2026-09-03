@@ -1,0 +1,33 @@
+name: Buat Aplikasi APK Winamp
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Ambil Kode Program
+      uses: actions/checkout@v3
+
+    - name: Siapkan Lingkungan Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Instal Alat Perakitan SDK Android
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libsqlite3-dev lldd scons texlive-extra-utils
+        pip install buildozer cython virtualenv
+
+    - name: Cetak File APK Final
+      run: |
+        yes y | buildozer -v android debug
+
+    - name: Simpan File APK Siap Unduh
+      uses: actions/upload-artifact@v3
+      with:
+        name: Aplikasi-Winamp-Mobile-Anda
+        path: bin/*.apk
